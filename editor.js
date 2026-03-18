@@ -120,7 +120,7 @@ async function load() {
           <span>标题</span>
           <input id="draft-title" value="${escapeHtml(draft.title)}" />
         </label>
-        <label>
+        <label class="editor-content-label">
           <span>正文</span>
           <textarea id="draft-content" rows="18">${escapeHtml(draft.content)}</textarea>
         </label>

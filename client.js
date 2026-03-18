@@ -102,7 +102,7 @@ function renderStats() {
       `
     )
     .join("");
-  document.querySelector("#headline").textContent = "超级龙虾社媒发布管理系统";
+  document.querySelector("#headline").textContent = "超级龙虾社媒发布管理";
   document.querySelector("#subline").textContent =
     "内容从飞书对话进入系统，首页只保留内容池与历史留档两个核心工作区。";
   document.querySelector("#stats").innerHTML = stats;

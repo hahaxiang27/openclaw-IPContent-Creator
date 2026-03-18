@@ -12,7 +12,7 @@ const WORKERS = [
     tagline: "接收飞书意图，拆任务、盯进度、催审核",
     avgDurationMinutes: 18,
     failureCount: 1,
-    skills: ["social-system-base", "lobster-coordinator"],
+    skills: ["lobster-coordinator"],
     recentTaskId: "task-seed-review"
   },
   {
@@ -23,7 +23,7 @@ const WORKERS = [
     tagline: "热点捕捉、资料补充、素材清洗",
     avgDurationMinutes: 26,
     failureCount: 2,
-    skills: ["social-system-base", "lobster-researcher"],
+    skills: ["lobster-researcher"],
     recentTaskId: "task-seed-review"
   },
   {
@@ -34,7 +34,7 @@ const WORKERS = [
     tagline: "多平台改写、版本提交、根据反馈重写",
     avgDurationMinutes: 39,
     failureCount: 0,
-    skills: ["social-system-base", "lobster-creator"],
+    skills: ["lobster-creator"],
     recentTaskId: "task-seed-review"
   }
 ];

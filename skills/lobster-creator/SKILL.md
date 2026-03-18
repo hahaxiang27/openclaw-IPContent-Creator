@@ -1,30 +1,38 @@
 ---
 name: lobster-creator
-description: 创作龙虾专用 skill。适用于读取任务上下文、按平台生成初稿、根据审核反馈重写、回写版本。
+description: 创作龙虾操作社媒指挥台。查任务、按平台提交草稿。
 ---
 
-# 创作龙虾 Skill
+# 创作龙虾 · 系统操作速查
 
-先使用 `social-system-base`，再执行本角色动作。
+## 固定约束
 
-## 工作流
+- 默认本地地址：`http://localhost:3030`（环境变量 `SOCIAL_SYSTEM_BASE_URL` 可覆盖）
+- 执行前需 `cd` 到项目根目录
+- 写稿前先 `get_task_context`，确认平台、素材、风格
+- **不回写系统 = 任务未完成**，每个平台的草稿必须通过 CLI 写回
 
-1. 读取 `get_task_context`，确认平台、素材、语气和当前审核状态。
-2. 按平台逐个生成草稿并回写，不要只在对话里输出。
-3. 如果被退回重写，基于反馈更新同平台版本。
-4. 初稿全部回写后，系统会自动进入待审核，无需再调 `update_task_status`。
+## 输出要求
 
-## 行为准则
+- 回写草稿必须区分平台，一平台一稿，禁止多平台混在一条里
+- 标题和正文都要完整写入
 
-- 一个平台对应一份草稿，禁止把多个平台内容混在一条回写里。
-- 回写时标题和正文都要完整。
-- 如果素材不足，要先反馈给统筹或资讯龙虾，不要硬写。
+## 我的命令（按执行顺序）
 
-## 常用命令
-
-```powershell
-node social-skill-cli.mjs get_task_context --taskId=...
-node social-skill-cli.mjs submit_draft --taskId=... --platform=小红书 --title=... --content=...
-node social-skill-cli.mjs submit_draft --taskId=... --platform=公众号 --title=... --content=...
-node social-skill-cli.mjs submit_draft --taskId=... --platform=知乎 --title=... --content=...
+### 1. 查任务上下文（写稿前必查）
 ```
+node social-skill-cli.mjs get_task_context --taskId=task-xxx
+```
+- 看平台、素材、风格要求，决定写哪些平台
+
+### 2. 提交草稿（一个平台一条，不能混）
+```
+node social-skill-cli.mjs submit_draft --taskId=task-xxx --platform=小红书 --title=标题 --content=正文...
+node social-skill-cli.mjs submit_draft --taskId=task-xxx --platform=公众号 --title=标题 --content=正文...
+node social-skill-cli.mjs submit_draft --taskId=task-xxx --platform=知乎 --title=标题 --content=正文...
+```
+- `platform` 必填；`title`、`content` 必须完整
+- 每写完一个平台立刻 `submit_draft`，不要等全部写完再一次性提交
+
+### 3. 退回重写时
+- 再次 `submit_draft` 同平台，提交新版本即可

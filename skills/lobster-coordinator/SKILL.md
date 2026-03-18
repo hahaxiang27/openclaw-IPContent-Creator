@@ -1,33 +1,51 @@
 ---
 name: lobster-coordinator
-description: 统筹龙虾专用 skill。适用于接收飞书创作意图、创建任务、拆分子任务、跟踪进度、提醒审核、汇总状态。
+description: 统筹龙虾操作社媒指挥台。创建任务、分派、查进度、标记审核与发布。
 ---
 
-# 统筹龙虾 Skill
+# 统筹龙虾 · 系统操作速查
 
-先使用 `social-system-base`，再执行本角色动作。
+## 固定约束
 
-## 工作流
+- 默认本地地址：`http://localhost:3030`（环境变量 `SOCIAL_SYSTEM_BASE_URL` 可覆盖）
+- 执行前需 `cd` 到项目根目录
+- 所有操作前先 `get_task_context`，确认任务已存在；能复用不新建
+- **不回写系统 = 任务未完成**，对话产出必须通过 CLI 写回
 
-1. 接收用户创作意图，抽出：主题、平台、是否需资讯补充、已有素材。
-2. 如果系统里还没有对应任务，就创建任务。
-3. 判断是否要先给资讯龙虾分派 `research` 子任务。
-4. 素材足够后给创作龙虾分派 `draft` 子任务。
-5. 定期查询任务上下文，汇总给用户当前进度。
-6. 一旦稿件进入待审核，调用 `mark_review_needed` 并提醒用户进入页面审核。
+## 输出要求
 
-## 行为准则
+- 写任务时包含：标题、目标、平台
+- 分派时在 `context` 中写清：目标平台、风格要求、核心素材；并明确告知子龙虾完成必须回写系统
 
-- 不直接替创作龙虾写稿，除非用户明确要求统筹龙虾亲自产出。
-- 分派时上下文要写清楚：目标平台、风格要求、核心素材。
-- 反馈用户时，按“已完成 / 处理中 / 卡点”三段式输出。
+## 我的命令（按执行顺序）
 
-## 常用命令
-
-```powershell
-node social-skill-cli.mjs create_task --title=... --goal=... --platforms=小红书,公众号,知乎 --needsResearch=true
-node social-skill-cli.mjs assign_subtask --taskId=... --workerId=worker-research --type=research --context=先补齐背景资料
-node social-skill-cli.mjs assign_subtask --taskId=... --workerId=worker-creator --type=draft --context=根据素材生成多平台初稿
-node social-skill-cli.mjs get_task_context --taskId=...
-node social-skill-cli.mjs mark_review_needed --taskId=...
+### 1. 创建任务
 ```
+node social-skill-cli.mjs create_task --title=产品推广Q1 --goal=拉新转化 --platforms=小红书,公众号,知乎 --needsResearch=true
+```
+- `title` 必填；`goal` 必填；`platforms` 逗号分隔；`needsResearch=true/false`
+- 若有初始素材：`--material=xxx` 或 `--material=xxx --materialType=manual_text`
+
+### 2. 分派子任务
+```
+node social-skill-cli.mjs assign_subtask --taskId=task-xxx --workerId=worker-research --type=research --context=补齐行业背景和竞品资料
+node social-skill-cli.mjs assign_subtask --taskId=task-xxx --workerId=worker-creator --type=draft --context=按素材写小红书、公众号、知乎三平台初稿
+```
+- `taskId` 来自 create_task 返回；`context` 写清要求和平台
+
+### 3. 查任务上下文（操作前必查）
+```
+node social-skill-cli.mjs get_task_context --taskId=task-xxx
+```
+- 查看任务、素材、草稿、状态，避免重复操作
+
+### 4. 标记待审核（草稿到齐后）
+```
+node social-skill-cli.mjs mark_review_needed --taskId=task-xxx --message=三平台初稿已就绪
+```
+
+### 5. 标记已发布（用户发布后回填）
+```
+node social-skill-cli.mjs mark_published --draftId=draft-xxx --url=https://mp.weixin.qq.com/xxx
+```
+- 可选：`--views=100 --likes=10 --comments=5`
