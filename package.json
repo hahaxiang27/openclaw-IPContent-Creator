@@ -1,0 +1,12 @@
+{
+  "name": "lobster-social-hq",
+  "version": "0.1.0",
+  "description": "Feishu lobster collaboration social media management platform",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node social-system.test.js"
+  }
+}

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>超级龙虾社媒发布管理系统</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🦞</text></svg>" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="hero panel">
+        <div class="hero-copy">
+          <p class="eyebrow">Industrial Console / Content Publishing</p>
+          <h1 id="headline">超级龙虾社媒发布管理系统</h1>
+          <p id="subline" class="subline"></p>
+        </div>
+        <div class="hero-aside">
+          <div class="signal">
+            <span class="signal-dot"></span>
+            <span>入口统一在飞书对话</span>
+          </div>
+          <div class="refresh-bar" onclick="window.__forceRefresh && window.__forceRefresh()" title="点击刷新">
+            <span class="refresh-icon"></span>
+            <span>自动刷新中</span>
+          </div>
+        </div>
+      </header>
+
+      <section id="stats" class="stats"></section>
+
+      <div class="dashboard-grid">
+        <section class="panel content-panel">
+          <div class="section-head">
+            <h2>内容池</h2>
+            <span>按平台切换，点击文章进入编辑页</span>
+          </div>
+          <div class="content-pool-shell">
+            <aside id="platform-rail" class="platform-rail"></aside>
+            <div class="content-pool-main">
+              <div class="pool-summary">
+                <div>
+                  <p class="eyebrow eyebrow-inline">Selected Platform</p>
+                  <h3 id="pool-platform-name">未选择平台</h3>
+                </div>
+                <div id="pool-counts" class="chips"></div>
+              </div>
+              <div id="content-list" class="content-list"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel history-panel">
+          <div class="section-head">
+            <h2>历史留档</h2>
+            <span>点击进入完整留档页</span>
+          </div>
+          <div id="history" class="history-grid compact-history"></div>
+        </section>
+      </div>
+    </div>
+
+    <script type="module" src="/client.js"></script>
+    <script>
+      window.__forceRefresh = () => {
+        if (typeof window.__refreshDashboard === "function") window.__refreshDashboard();
+      };
+    </script>
+  </body>
+</html>
