@@ -1,40 +1,19 @@
 # 龙虾社媒指挥台
 
-本项目实现了一个本地运行的社媒内容协作系统，核心目标是把飞书中的统筹龙虾、资讯龙虾、创作龙虾接入同一条内容生产流水线。
+把飞书里的统筹龙虾、资讯龙虾、创作龙虾接入同一条本地内容流水线，通过 Web 指挥台管理任务、素材、草稿与发布留档。
 
-## 已实现能力
+---
 
-- 本地 Web 指挥台：任务池、龙虾工作台、今日初稿池、待发布池、已发布池、历史留档。
-- 本地 API：支持 `create_task`、`assign_subtask`、`append_material`、`submit_draft`、`update_task_status`、`list_my_queue`、`get_task_context`、`mark_review_needed`、`mark_published`。
-- 本地 skill CLI：`social-skill-cli.mjs` 可作为不同龙虾 skill 的底层调用工具。
-- 数据落盘：默认写入 `data/social-system.json`。
+## 飞书龙虾 skill 安装
 
-## 运行方式
+### 统筹龙虾
 
-```powershell
-node server.js
-```
+请学习这两个 skill：1）社媒系统基座 https://raw.githubusercontent.com/hahaxiang27/openclaw-IPContent-Creator/master/skills/social-system-base/SKILL.md ，用于操作本地龙虾社媒指挥台；2）统筹专用 skill https://raw.githubusercontent.com/hahaxiang27/openclaw-IPContent-Creator/master/skills/lobster-coordinator/SKILL.md ，用于接收飞书创作意图、创建任务、拆分子任务、跟踪进度、提醒审核。先执行基座，再按统筹 skill 的流程工作。
 
-启动后访问 [http://localhost:3030](http://localhost:3030)。
+### 资讯龙虾
 
-## 常用 CLI 示例
+请学习这两个 skill：1）社媒系统基座 https://raw.githubusercontent.com/hahaxiang27/openclaw-IPContent-Creator/master/skills/social-system-base/SKILL.md ，用于操作本地龙虾社媒指挥台；2）资讯专用 skill https://raw.githubusercontent.com/hahaxiang27/openclaw-IPContent-Creator/master/skills/lobster-researcher/SKILL.md ，用于围绕任务补充热点、链接摘要、活动笔记、Get 笔记等，并把结果写回本地系统。先执行基座，再按资讯 skill 的流程工作。
 
-```powershell
-node social-skill-cli.mjs create_task --title=今天的AI总结 --goal=根据活动笔记生成小红书和公众号初稿 --platforms=小红书,公众号 --needsResearch=true --material=这是我今天的活动记录
-node social-skill-cli.mjs list_my_queue --workerId=worker-creator
-node social-skill-cli.mjs get_task_context --taskId=task-xxxx
-```
+### 创作龙虾
 
-## 测试
-
-```powershell
-node --test
-```
-
-## 文件说明
-
-- `server.js`：本地 HTTP 服务入口。
-- `app-handler.js`：API 路由和静态资源分发。
-- `social-system-store.js`：数据模型、状态流转和种子数据。
-- `index.html` / `styles.css` / `client.js`：本地控制台前端。
-- `social-skill-cli.mjs`：供 skill / 龙虾调用的本地命令入口。
+请学习这两个 skill：1）社媒系统基座 https://raw.githubusercontent.com/hahaxiang27/openclaw-IPContent-Creator/master/skills/social-system-base/SKILL.md ，用于操作本地龙虾社媒指挥台；2）创作专用 skill https://raw.githubusercontent.com/hahaxiang27/openclaw-IPContent-Creator/master/skills/lobster-creator/SKILL.md ，用于按平台生成初稿、根据审核反馈重写并回写版本。先执行基座，再按创作 skill 的流程工作。
