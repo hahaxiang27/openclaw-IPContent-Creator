@@ -93,199 +93,28 @@ function workerName(data, workerId) {
   return data.workers.find((worker) => worker.id === workerId)?.name || "未指派";
 }
 
+const DEFAULT_PLATFORMS = ["小红书", "公众号", "知乎"];
+
 function seedData() {
   const seededAt = now();
+  const workers = WORKERS.map((w) => ({
+    ...w,
+    status: "idle",
+    recentTaskId: null
+  }));
   return {
     meta: {
       version: 1,
       seededAt
     },
-    workers: WORKERS,
-    tasks: [
-      {
-        id: "task-seed-review",
-        title: "根据 AI 工具大会线下笔记整理今日选题",
-        goal: "围绕 AI 工具大会参会洞察，生成小红书与公众号初稿。",
-        type: "event_notes_to_post",
-        priority: "high",
-        origin: "飞书统筹指令",
-        platforms: ["小红书", "公众号"],
-        status: "review",
-        currentOwnerId: "worker-coordinator",
-        needsResearch: true,
-        createdAt: seededAt,
-        updatedAt: seededAt,
-        reviewRequestedAt: seededAt
-      },
-      {
-        id: "task-seed-published",
-        title: "把 3 篇 AI Agent 文章整合成知乎回答",
-        goal: "整合三篇外部文章和一条 Get 笔记，生成知乎长文并完成发布记录留档。",
-        type: "multi_link_compilation",
-        priority: "medium",
-        origin: "手工录入",
-        platforms: ["知乎"],
-        status: "published",
-        currentOwnerId: "worker-coordinator",
-        needsResearch: false,
-        createdAt: seededAt,
-        updatedAt: seededAt,
-        reviewRequestedAt: seededAt,
-        publishedAt: seededAt
-      }
-    ],
-    assignments: [
-      {
-        id: "assignment-seed-coordinator",
-        taskId: "task-seed-review",
-        workerId: "worker-coordinator",
-        type: "orchestration",
-        status: "completed",
-        inputContext: "根据线下活动内容组织资讯与创作链路。",
-        dueAt: seededAt,
-        createdAt: seededAt,
-        updatedAt: seededAt
-      },
-      {
-        id: "assignment-seed-research",
-        taskId: "task-seed-review",
-        workerId: "worker-research",
-        type: "research",
-        status: "completed",
-        inputContext: "补充大会嘉宾观点和会后热点评论。",
-        dueAt: seededAt,
-        createdAt: seededAt,
-        updatedAt: seededAt
-      },
-      {
-        id: "assignment-seed-creator",
-        taskId: "task-seed-review",
-        workerId: "worker-creator",
-        type: "draft",
-        status: "completed",
-        inputContext: "生成小红书和公众号初稿。",
-        dueAt: seededAt,
-        createdAt: seededAt,
-        updatedAt: seededAt
-      }
-    ],
-    materials: [
-      {
-        id: "material-seed-note",
-        taskId: "task-seed-review",
-        type: "event_note",
-        title: "线下活动随手记",
-        content: "参加 AI 工具大会，重点关注 Agent 协同、工作流自动化和内容生产工具化。",
-        sourceUrl: "",
-        tags: ["线下活动", "AI Agent"],
-        createdAt: seededAt
-      },
-      {
-        id: "material-seed-get",
-        taskId: "task-seed-published",
-        type: "get_note",
-        title: "Get 笔记摘录",
-        content: "内容创作的关键不在单篇质量，而在素材池和复用机制。",
-        sourceUrl: "",
-        tags: ["Get", "内容策略"],
-        createdAt: seededAt
-      }
-    ],
-    drafts: [
-      {
-        id: "draft-seed-rednote",
-        taskId: "task-seed-review",
-        platform: "小红书",
-        title: "参加完 AI 工具大会，我更确定内容团队会先被 Agent 重构",
-        content: "今天在线下活动里最大的感受，不是工具又多了几个，而是内容生产已经进入协同时代。",
-        version: 2,
-        reviewStatus: "pending_review",
-        publishStatus: "not_ready",
-        assignedWorkerId: "worker-creator",
-        materialIds: ["material-seed-note"],
-        createdAt: seededAt,
-        updatedAt: seededAt
-      },
-      {
-        id: "draft-seed-wechat",
-        taskId: "task-seed-review",
-        platform: "公众号",
-        title: "AI 工具大会复盘：内容团队为什么需要一个统一的指挥台",
-        content: "如果把创作看成工厂，那么素材、分工、审核、发布就不能只存在于聊天窗口。",
-        version: 1,
-        reviewStatus: "pending_review",
-        publishStatus: "not_ready",
-        assignedWorkerId: "worker-creator",
-        materialIds: ["material-seed-note"],
-        createdAt: seededAt,
-        updatedAt: seededAt
-      },
-      {
-        id: "draft-seed-zhihu",
-        taskId: "task-seed-published",
-        platform: "知乎",
-        title: "多代理协作，为什么会成为内容团队的新基础设施？",
-        content: "从素材归档到跨平台改写，多代理协作本质上是在重构内容生产的接口。",
-        version: 3,
-        reviewStatus: "approved",
-        publishStatus: "published",
-        assignedWorkerId: "worker-creator",
-        materialIds: ["material-seed-get"],
-        createdAt: seededAt,
-        updatedAt: seededAt,
-        publishedAt: seededAt
-      }
-    ],
-    logs: [
-      {
-        id: "log-seed-1",
-        taskId: "task-seed-review",
-        workerId: "worker-coordinator",
-        action: "create_task",
-        message: "统筹龙虾已创建今日创作任务并拆分为资讯采集 + 多平台写作。",
-        result: "success",
-        durationMs: 1500,
-        createdAt: seededAt
-      },
-      {
-        id: "log-seed-2",
-        taskId: "task-seed-review",
-        workerId: "worker-research",
-        action: "append_material",
-        message: "补充线下活动摘要与热点背景信息。",
-        result: "success",
-        durationMs: 26000,
-        createdAt: seededAt
-      },
-      {
-        id: "log-seed-3",
-        taskId: "task-seed-review",
-        workerId: "worker-creator",
-        action: "submit_draft",
-        message: "已生成小红书、公众号初稿，等待审核。",
-        result: "success",
-        durationMs: 38000,
-        createdAt: seededAt
-      }
-    ],
-    publishRecords: [
-      {
-        id: "publish-seed-1",
-        taskId: "task-seed-published",
-        draftId: "draft-seed-zhihu",
-        platform: "知乎",
-        url: "https://example.com/zhihu/agent-content-infra",
-        publishedAt: seededAt,
-        finalTitle: "多代理协作，为什么会成为内容团队的新基础设施？",
-        metrics: {
-          views: 1268,
-          likes: 47,
-          bookmarks: 18,
-          comments: 9,
-          shares: 5
-        }
-      }
-    ]
+    platforms: DEFAULT_PLATFORMS,
+    workers,
+    tasks: [],
+    assignments: [],
+    materials: [],
+    drafts: [],
+    logs: [],
+    publishRecords: []
   };
 }
 
@@ -338,6 +167,7 @@ function buildDashboard(data) {
   return {
     headline: "飞书龙虾协作式社媒系统",
     subline: "把飞书里的分工龙虾、素材池、审核池和发布池收进同一条本地内容流水线。",
+    platforms: data.platforms || DEFAULT_PLATFORMS,
     stats: [
       { key: "tasks", label: "任务总数", value: data.tasks.length },
       { key: "review", label: "待审核草稿", value: waitingReview },
@@ -420,7 +250,29 @@ export class SocialSystemStore {
 
   async init() {
     try {
-      await readFile(this.filePath, "utf8");
+      const data = await this.read();
+      let changed = false;
+      if (!data.platforms) {
+        data.platforms = DEFAULT_PLATFORMS;
+        changed = true;
+      }
+      const seedTaskIds = ["task-seed-review", "task-seed-published"];
+      const hasSeedTasks = data.tasks?.some((t) => seedTaskIds.includes(t.id));
+      if (hasSeedTasks) {
+        data.tasks = [];
+        data.assignments = [];
+        data.materials = [];
+        data.drafts = [];
+        data.logs = [];
+        data.publishRecords = [];
+        data.workers = (data.workers || WORKERS).map((w) => ({
+          ...w,
+          status: "idle",
+          recentTaskId: null
+        }));
+        changed = true;
+      }
+      if (changed) await this.write(data);
     } catch {
       await mkdir(path.dirname(this.filePath), { recursive: true });
       await this.write(seedData());

@@ -59,7 +59,9 @@ async function loadTask(taskId) {
 }
 
 function collectPlatforms() {
-  return [...new Set(getAllDrafts().map((draft) => draft.platform))];
+  const fromDrafts = getAllDrafts().map((draft) => draft.platform);
+  const fromConfig = state.bootstrap?.dashboard?.platforms || [];
+  return [...new Set([...fromConfig, ...fromDrafts])];
 }
 
 function getAllDrafts() {
